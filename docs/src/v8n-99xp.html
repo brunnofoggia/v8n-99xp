@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+<html class="dark">
+    <head>
+        <title>v8n-99xp.js</title>
+        <meta http-equiv="content-type" content="text/html; charset=UTF-8">
+        <link rel="stylesheet" media="all" href="/public/stylesheets/normalize.css" />
+        <link rel="stylesheet" media="all" href="../docco.css" />
+        <link rel="stylesheet" media="all" href="https://public.99xp.org/styles/color-modes.css" />
+        <link rel="stylesheet" media="all" href="https://public.99xp.org/styles/design.css" />
+    </head>
+    <body>
+        <div class="container">
+            <div class="page">
+
+                <div class="header">
+                    <small class="color-modes">
+                        <a href="#" class="color-mode dark" onclick="event.preventDefault(); document.getElementsByTagName('html')[0].classList.add('dark'); document.getElementsByTagName('html')[0].classList.remove('light')">&nbsp;</a>
+                        &nbsp;&nbsp;&nbsp;
+                        <a href="#" class="color-mode light" onclick="event.preventDefault(); document.getElementsByTagName('html')[0].classList.remove('dark'); document.getElementsByTagName('html')[0].classList.add('light')">&nbsp;</a>
+                    </small>
+                    
+                    <h1>v8n-99xp.js</h1>
+                    
+
+                    
+                </div>
+
+                
+                    
+                    <p><a href="https://github.com/brunnofoggia/v8n-99xp">v8n-99xp</a> is a set of validation
+methods based on projects I’ve been working on using
+<a href="https://imbrn.github.io/v8n/">v8n</a>. Validations included: email, alpha string, 
+fullname, passwords match, cpf, cnpj, credit card number and validto, renavam, brphone</p>
+
+                    
+                    
+                    
+                    <h2 id="baseline-setup">Baseline setup</h2>
+
+                    
+                    
+                    
+                    
+                    
+                    <div class='highlight'><pre><span class="hljs-keyword">import</span> v8n <span class="hljs-keyword">from</span> <span class="hljs-string">'v8n'</span>;</pre></div>
+                    
+                    
+                    
+                    <p>Email validation regex based</p>
+
+                    
+                    <div class='highlight'><pre>v8n.extend({
+    email(expected) {
+        <span class="hljs-keyword">return</span> <span class="hljs-function">(<span class="hljs-params">value</span>) =&gt;</span> {
+            <span class="hljs-keyword">var</span> validate = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">email</span>) </span>{
+                <span class="hljs-keyword">if</span> (!email || <span class="hljs-keyword">typeof</span> email !== <span class="hljs-string">'string'</span>) {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+                }
+
+                <span class="hljs-keyword">if</span> (<span class="hljs-regexp">/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/</span>.test(email)) {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+                }
+
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+            };
+
+            <span class="hljs-keyword">return</span> validate(value);
+        }
+    }
+});</pre></div>
+                    
+                    
+                    
+                    <p>Alpha Numeric validation</p>
+
+                    
+                    <div class='highlight'><pre>v8n.extend({
+    stringAlpha(expected) {
+        <span class="hljs-keyword">return</span> <span class="hljs-function">(<span class="hljs-params">value</span>) =&gt;</span> {
+            <span class="hljs-keyword">var</span> validate = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">s</span>) </span>{
+                <span class="hljs-keyword">if</span> (!s || <span class="hljs-keyword">typeof</span> s !== <span class="hljs-string">'string'</span>) {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+                }
+
+                <span class="hljs-keyword">if</span> (<span class="hljs-regexp">/[a-zA-Z]+/</span>.test(s) &amp;&amp; <span class="hljs-regexp">/[0-9]+/</span>.test(s) &amp;&amp; !<span class="hljs-regexp">/[^a-zA-Z0-9]+/</span>.test(s)) {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+                }
+
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+            };
+
+            <span class="hljs-keyword">return</span> validate(value);
+        }
+    }
+});</pre></div>
+                    
+                    
+                    
+                    <p>Fullname validation (reject single names)</p>
+
+                    
+                    <div class='highlight'><pre>v8n.extend({
+    fullname(expected) {
+        <span class="hljs-keyword">return</span> <span class="hljs-function">(<span class="hljs-params">value</span>) =&gt;</span> {
+            <span class="hljs-keyword">var</span> validate = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">v</span>) </span>{
+                <span class="hljs-keyword">if</span> (!v || <span class="hljs-keyword">typeof</span> v !== <span class="hljs-string">'string'</span>) {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+                }
+
+                <span class="hljs-keyword">var</span> vf = v.normalize(<span class="hljs-string">'NFD'</span>).replace(<span class="hljs-regexp">/[\u0300-\u036f]/g</span>, <span class="hljs-string">''</span>);
+                <span class="hljs-keyword">if</span> (<span class="hljs-regexp">/^[a-zA-Z]{2,}(\s+(([a-zA-Z]{3,})|([a-zA-Z]{2,}\s+[a-zA-Z]{3,})))+$/</span>.test(vf) &amp;&amp;
+                        !<span class="hljs-regexp">/[bcdfghjklmnpqrstvwxyz]{3,}/</span>.test(vf)) {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+                }
+
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+            };
+
+            <span class="hljs-keyword">return</span> validate(value);
+        }
+    }
+});</pre></div>
+                    
+                    
+                    
+                    <p>Password match compares two password values
+It is required to work that you have both with quite the same name, like
+password and password_1 or password_lorem and passowrd_lorem_1
+and apply the validation to password_1 because the last _ and everything after
+it will be removed to get the first field, password in this case</p>
+
+                    
+                    <div class='highlight'><pre>v8n.extend({
+    passwordMatch(expected) {
+        <span class="hljs-keyword">return</span> <span class="hljs-function">(<span class="hljs-params">value, attrs</span>) =&gt;</span> {
+            <span class="hljs-keyword">var</span> validate = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">data</span>) </span>{
+                <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> (data) !== <span class="hljs-string">'object'</span>) {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+                }
+
+                <span class="hljs-keyword">var</span> [v, a, f] = data;
+
+                <span class="hljs-keyword">var</span> f1 = f.split(<span class="hljs-string">'_'</span>);
+                f1.pop();
+                f1 = f1.join(<span class="hljs-string">'_'</span>);
+
+                <span class="hljs-keyword">if</span> (!v || !a || !(f1 <span class="hljs-keyword">in</span> a)) {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+                }
+
+                <span class="hljs-keyword">if</span> (v + <span class="hljs-string">''</span> !== a[f1] + <span class="hljs-string">''</span>) {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+                }
+
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+            };
+
+            <span class="hljs-keyword">return</span> validate(value, attrs);
+        }
+    }
+});</pre></div>
+                    
+                    
+                    
+                    <p>CPF Validation (works with or without mask)</p>
+
+                    
+                    <div class='highlight'><pre>v8n.extend({
+    cpf(expected) {
+        <span class="hljs-keyword">return</span> <span class="hljs-function">(<span class="hljs-params">value</span>) =&gt;</span> {
+            <span class="hljs-keyword">const</span> mod11 = <span class="hljs-function">(<span class="hljs-params">num</span>) =&gt;</span> num % <span class="hljs-number">11</span>
+            <span class="hljs-keyword">const</span> not = <span class="hljs-function">(<span class="hljs-params">x</span>) =&gt;</span> !x
+            <span class="hljs-keyword">const</span> isEqual = <span class="hljs-function">(<span class="hljs-params">a</span>) =&gt;</span> <span class="hljs-function">(<span class="hljs-params">b</span>) =&gt;</span> b === a
+            <span class="hljs-keyword">const</span> mergeDigits = <span class="hljs-function">(<span class="hljs-params">num1, num2</span>) =&gt;</span> <span class="hljs-string">`<span class="hljs-subst">${num1}</span><span class="hljs-subst">${num2}</span>`</span>
+            <span class="hljs-keyword">const</span> getTwoLastDigits = <span class="hljs-function">(<span class="hljs-params">cpf</span>) =&gt;</span> <span class="hljs-string">`<span class="hljs-subst">${cpf[ <span class="hljs-number">9</span> ]}</span><span class="hljs-subst">${cpf[ <span class="hljs-number">10</span> ]}</span>`</span>
+            <span class="hljs-keyword">const</span> getCpfToCheckInArray = <span class="hljs-function">(<span class="hljs-params">cpf</span>) =&gt;</span> cpf.substr(<span class="hljs-number">0</span>, <span class="hljs-number">9</span>).split(<span class="hljs-string">''</span>)
+            <span class="hljs-keyword">const</span> generateArray = <span class="hljs-function">(<span class="hljs-params">length</span>) =&gt;</span> <span class="hljs-built_in">Array</span>.from({length}, (v, k) =&gt; k)
+
+            <span class="hljs-keyword">const</span> isIn = <span class="hljs-function">(<span class="hljs-params">list</span>) =&gt;</span> <span class="hljs-function">(<span class="hljs-params">val</span>) =&gt;</span>
+                    list.findIndex(<span class="hljs-function"><span class="hljs-params">v</span> =&gt;</span> val === v) &gt;= <span class="hljs-number">0</span>
+
+            <span class="hljs-keyword">const</span> isSameDigitsCPF = <span class="hljs-function">(<span class="hljs-params">cpfFull</span>) =&gt;</span>
+                isIn(generateArray(<span class="hljs-number">10</span>).map(generateStringSequence(<span class="hljs-number">11</span>)))(cpfFull)
+
+            <span class="hljs-keyword">const</span> generateStringSequence = <span class="hljs-function">(<span class="hljs-params">times</span>) =&gt;</span> <span class="hljs-function">(<span class="hljs-params">char</span>) =&gt;</span>
+                    (<span class="hljs-string">`<span class="hljs-subst">${char}</span>`</span>.repeat(times))
+
+            <span class="hljs-keyword">const</span> toSumOfMultiplication = <span class="hljs-function">(<span class="hljs-params">total</span>) =&gt;</span> <span class="hljs-function">(<span class="hljs-params">result, num, i</span>) =&gt;</span>
+                    result + (num * total--)
+
+            <span class="hljs-keyword">const</span> getSumOfMultiplication = <span class="hljs-function">(<span class="hljs-params">list, total</span>) =&gt;</span>
+                list.reduce(toSumOfMultiplication(total), <span class="hljs-number">0</span>)
+
+            <span class="hljs-keyword">const</span> getValidationDigit = <span class="hljs-function">(<span class="hljs-params">total</span>) =&gt;</span> <span class="hljs-function">(<span class="hljs-params">cpf</span>) =&gt;</span>
+                    <span class="hljs-keyword">get</span><span class="hljs-title">Digit</span>(<span class="hljs-params">mod11(getSumOfMultiplication(cpf, total</span>)))
+
+            <span class="hljs-title">const</span> <span class="hljs-title">getDigit</span> = (<span class="hljs-params">num</span>) =&gt; (<span class="hljs-params">num &gt; <span class="hljs-number">1</span></span>) ? 11 - <span class="hljs-title">num</span> : 0
+
+            <span class="hljs-title">const</span> <span class="hljs-title">isValidCPF</span> = (<span class="hljs-params">cpfFull</span>) =&gt; {
+                <span class="hljs-keyword">const</span> cpf = <span class="hljs-keyword">get</span><span class="hljs-title">CpfToCheckInArray</span>(<span class="hljs-params">cpfFull</span>)
+                <span class="hljs-title">const</span> <span class="hljs-title">firstDigit</span> = <span class="hljs-title">getValidationDigit</span>(<span class="hljs-params"><span class="hljs-number">10</span></span>)(<span class="hljs-params">cpf</span>)
+                <span class="hljs-title">const</span> <span class="hljs-title">secondDigit</span> = <span class="hljs-title">getValidationDigit</span>(<span class="hljs-params"><span class="hljs-number">11</span></span>)(<span class="hljs-params">cpf.concat(firstDigit</span>))
+
+                <span class="hljs-title">return</span> <span class="hljs-title">isEqual</span>(<span class="hljs-params">getTwoLastDigits(cpfFull</span>))(<span class="hljs-params">mergeDigits(firstDigit, secondDigit</span>));
+            }
+
+            <span class="hljs-title">const</span> <span class="hljs-title">validate</span> = (<span class="hljs-params">CPF</span>) =&gt; <span class="hljs-title">not</span>(<span class="hljs-params">isSameDigitsCPF(CPF</span>)) &amp;&amp; <span class="hljs-title">isValidCPF</span>(<span class="hljs-params">CPF</span>)
+
+            <span class="hljs-title">return</span> <span class="hljs-title">validate</span>(<span class="hljs-params">value.replace(<span class="hljs-regexp">/(\.|\-)/g</span>, <span class="hljs-string">''</span></span>));
+        }
+    }
+});</pre></div>
+                    
+                    
+                    
+                    <p>CNPJ Validation (works with or without mask)</p>
+
+                    
+                    <div class='highlight'><pre>v8n.extend({
+    cnpj(expected) {
+        <span class="hljs-keyword">return</span> <span class="hljs-function">(<span class="hljs-params">value</span>) =&gt;</span> {
+            <span class="hljs-keyword">const</span> mod14 = <span class="hljs-function">(<span class="hljs-params">num</span>) =&gt;</span> num % <span class="hljs-number">14</span>
+            <span class="hljs-keyword">const</span> not = <span class="hljs-function">(<span class="hljs-params">x</span>) =&gt;</span> !x
+            <span class="hljs-keyword">const</span> generateArray = <span class="hljs-function">(<span class="hljs-params">length</span>) =&gt;</span> <span class="hljs-built_in">Array</span>.from({length}, (v, k) =&gt; k)
+
+            <span class="hljs-keyword">const</span> isIn = <span class="hljs-function">(<span class="hljs-params">list</span>) =&gt;</span> <span class="hljs-function">(<span class="hljs-params">val</span>) =&gt;</span> list.findIndex(<span class="hljs-function"><span class="hljs-params">v</span> =&gt;</span> val === v) &gt;= <span class="hljs-number">0</span>;
+
+            <span class="hljs-keyword">const</span> isSameDigitsCNPJ = <span class="hljs-function">(<span class="hljs-params">cnpjFull</span>) =&gt;</span>
+                isIn(generateArray(<span class="hljs-number">10</span>).map(generateStringSequence(<span class="hljs-number">14</span>)))(cnpjFull)
+
+            <span class="hljs-keyword">const</span> generateStringSequence = <span class="hljs-function">(<span class="hljs-params">times</span>) =&gt;</span> <span class="hljs-function">(<span class="hljs-params">char</span>) =&gt;</span>
+                    (<span class="hljs-string">`<span class="hljs-subst">${char}</span>`</span>.repeat(times))
+
+            <span class="hljs-keyword">const</span> isValidCNPJ = <span class="hljs-function">(<span class="hljs-params">cnpj</span>) =&gt;</span> {
+                <span class="hljs-keyword">if</span> (!cnpj || mod14(cnpj.length) &gt; <span class="hljs-number">0</span>) {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+                }
+
+                <span class="hljs-keyword">var</span> tamanho, numeros, digitos, soma, pos, i, resultado;
+
+                tamanho = cnpj.length - <span class="hljs-number">2</span>;
+                numeros = cnpj.substring(<span class="hljs-number">0</span>, tamanho);
+                digitos = cnpj.substring(tamanho);
+                soma = <span class="hljs-number">0</span>;
+                pos = tamanho - <span class="hljs-number">7</span>;
+                <span class="hljs-keyword">for</span> (i = tamanho; i &gt;= <span class="hljs-number">1</span>; i--) {
+                    soma += numeros.charAt(tamanho - i) * pos--;
+                    <span class="hljs-keyword">if</span> (pos &lt; <span class="hljs-number">2</span>) {
+                        pos = <span class="hljs-number">9</span>;
+                    }
+                }
+                resultado = soma % <span class="hljs-number">11</span> &lt; <span class="hljs-number">2</span> ? <span class="hljs-number">0</span> : <span class="hljs-number">11</span> - soma % <span class="hljs-number">11</span>;
+                <span class="hljs-keyword">if</span> (resultado + <span class="hljs-string">''</span> !== digitos.charAt(<span class="hljs-number">0</span>) + <span class="hljs-string">''</span>) {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+                }
+                tamanho = tamanho + <span class="hljs-number">1</span>;
+                numeros = cnpj.substring(<span class="hljs-number">0</span>, tamanho);
+                soma = <span class="hljs-number">0</span>;
+                pos = tamanho - <span class="hljs-number">7</span>;
+                <span class="hljs-keyword">for</span> (i = tamanho; i &gt;= <span class="hljs-number">1</span>; i--) {
+                    soma += numeros.charAt(tamanho - i) * pos--;
+                    <span class="hljs-keyword">if</span> (pos &lt; <span class="hljs-number">2</span>) {
+                        pos = <span class="hljs-number">9</span>;
+                    }
+                }
+                resultado = soma % <span class="hljs-number">11</span> &lt; <span class="hljs-number">2</span> ? <span class="hljs-number">0</span> : <span class="hljs-number">11</span> - soma % <span class="hljs-number">11</span>;
+                <span class="hljs-keyword">if</span> (resultado + <span class="hljs-string">''</span> !== digitos.charAt(<span class="hljs-number">1</span>) + <span class="hljs-string">''</span>) {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+                }
+
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+            }
+
+            <span class="hljs-keyword">const</span> validate = <span class="hljs-function">(<span class="hljs-params">CNPJ</span>) =&gt;</span> not(isSameDigitsCNPJ(CNPJ)) &amp;&amp; isValidCNPJ(CNPJ);
+
+            <span class="hljs-keyword">return</span> validate(value.replace(<span class="hljs-regexp">/(\.|\-|\/)/g</span>, <span class="hljs-string">''</span>));
+        }
+    }
+});</pre></div>
+                    
+                    
+                    
+                    <p>Credit card number validation - <a href="https://medium.com/swlh/credit-card-validation-in-javascript-ruby-and-c-4b0a9b245766">Reference</a></p>
+
+                    
+                    <div class='highlight'><pre>v8n.extend({
+    creditcard(expected) {
+        <span class="hljs-keyword">return</span> <span class="hljs-function">(<span class="hljs-params">value</span>) =&gt;</span> {
+
+            <span class="hljs-keyword">const</span> sumArrDigits = <span class="hljs-function">(<span class="hljs-params">array</span>) =&gt;</span> {
+                <span class="hljs-keyword">return</span> array.join(<span class="hljs-string">''</span>).split(<span class="hljs-string">''</span>).map(<span class="hljs-function"><span class="hljs-params">e</span> =&gt;</span> <span class="hljs-built_in">parseInt</span>(e))
+            };
+
+            <span class="hljs-keyword">const</span> validlen = <span class="hljs-function">(<span class="hljs-params">arr</span>) =&gt;</span> {
+                <span class="hljs-keyword">return</span> arr.length === <span class="hljs-number">13</span> || arr.length === <span class="hljs-number">15</span> || arr.length === <span class="hljs-number">16</span>
+            };
+
+            <span class="hljs-keyword">const</span> arrSplit = <span class="hljs-function">(<span class="hljs-params">cardArray</span>) =&gt;</span> {
+                <span class="hljs-keyword">const</span> selectOddValues = cardArray.filter(<span class="hljs-function">(<span class="hljs-params">a, i</span>) =&gt;</span> i % <span class="hljs-number">2</span> === <span class="hljs-number">1</span>);
+                <span class="hljs-keyword">const</span> selectEvenValues = cardArray.filter(<span class="hljs-function">(<span class="hljs-params">a, i</span>) =&gt;</span> i % <span class="hljs-number">2</span> === <span class="hljs-number">0</span>);
+                <span class="hljs-keyword">let</span> arr1;
+                <span class="hljs-keyword">let</span> arr2;
+                <span class="hljs-keyword">if</span> (cardArray.length % <span class="hljs-number">2</span> === <span class="hljs-number">1</span>) {
+                    arr1 = selectOddValues.map(<span class="hljs-function"><span class="hljs-params">e</span> =&gt;</span> e * <span class="hljs-number">2</span>);
+                    arr2 = selectEvenValues;
+                } <span class="hljs-keyword">else</span> {
+                    arr1 = selectEvenValues.map(<span class="hljs-function"><span class="hljs-params">e</span> =&gt;</span> e * <span class="hljs-number">2</span>);
+                    arr2 = selectOddValues;
+                }
+                <span class="hljs-keyword">return</span> {arr1, arr2}
+            };
+
+            <span class="hljs-keyword">const</span> isValidCC = <span class="hljs-function">(<span class="hljs-params">cardNumber</span>) =&gt;</span> {
+                <span class="hljs-keyword">const</span> cardArray = cardNumber.toString().split(<span class="hljs-string">''</span>).map(<span class="hljs-function">(<span class="hljs-params">e</span>) =&gt;</span> <span class="hljs-built_in">parseInt</span>(e))
+                validlen(cardArray);
+                <span class="hljs-keyword">const</span> splitArr = arrSplit(cardArray)
+                <span class="hljs-keyword">const</span> checksum = sumArrDigits(splitArr.arr1).reduce(<span class="hljs-function">(<span class="hljs-params">a, c</span>) =&gt;</span> a + c) + splitArr.arr2.reduce(<span class="hljs-function">(<span class="hljs-params">a, c</span>) =&gt;</span> a + c);
+
+                <span class="hljs-keyword">if</span> (checksum % <span class="hljs-number">10</span> === <span class="hljs-number">0</span>) {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+                }
+
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+            }
+
+
+            <span class="hljs-keyword">const</span> validate = <span class="hljs-function">(<span class="hljs-params">cardNumber</span>) =&gt;</span> isValidCC(cardNumber);
+
+            <span class="hljs-keyword">return</span> validate(value.replace(<span class="hljs-regexp">/[^0-9]/g</span>, <span class="hljs-string">''</span>));
+        }
+    }
+});</pre></div>
+                    
+                    
+                    
+                    <p>Credit card validto validation (requires mm/yyyy mask)</p>
+
+                    
+                    <div class='highlight'><pre>v8n.extend({
+    creditcardValidTo(expected) {
+        <span class="hljs-keyword">return</span> <span class="hljs-function">(<span class="hljs-params">value</span>) =&gt;</span> {
+
+            <span class="hljs-keyword">const</span> isValidDate = <span class="hljs-function">(<span class="hljs-params">dateStr</span>) =&gt;</span> {
+                <span class="hljs-keyword">if</span> (!<span class="hljs-regexp">/^\d{2}\/\d{4}$/</span>.test(dateStr)) {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+                }
+
+                <span class="hljs-keyword">var</span> [m, y] = dateStr.split(<span class="hljs-string">'/'</span>),
+                cY = (<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>()).getFullYear(),
+                        cM = (<span class="hljs-keyword">new</span> <span class="hljs-built_in">Date</span>()).getMonth() + <span class="hljs-number">1</span>;
+
+                <span class="hljs-keyword">if</span> (<span class="hljs-built_in">parseInt</span>(m, <span class="hljs-number">10</span>) &lt; <span class="hljs-number">1</span> || <span class="hljs-built_in">parseInt</span>(m, <span class="hljs-number">10</span>) &gt; <span class="hljs-number">12</span>) {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+                }
+                <span class="hljs-keyword">if</span> (<span class="hljs-built_in">parseInt</span>(y, <span class="hljs-number">10</span>) &lt; cY || <span class="hljs-built_in">parseInt</span>(y, <span class="hljs-number">10</span>) &gt; (cY + <span class="hljs-number">10</span>)) {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+                } <span class="hljs-keyword">else</span> <span class="hljs-keyword">if</span> (<span class="hljs-built_in">parseInt</span>(y, <span class="hljs-number">10</span>) === cY &amp;&amp; <span class="hljs-built_in">parseInt</span>(m, <span class="hljs-number">10</span>) &lt; cM) {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+                }
+
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+            }
+
+
+            <span class="hljs-keyword">const</span> validate = <span class="hljs-function">(<span class="hljs-params">dateStr</span>) =&gt;</span> isValidDate(dateStr);
+
+            <span class="hljs-keyword">return</span> validate(value);
+        }
+    }
+});</pre></div>
+                    
+                    
+                    
+                    <p>Renavam validation - <a href="https://github.com/eliseuborges/Renavam/blob/master/Renavam.js">Reference</a></p>
+
+                    
+                    <div class='highlight'><pre>v8n.extend({
+    renavam(expected) {
+        <span class="hljs-keyword">return</span> <span class="hljs-function">(<span class="hljs-params">value</span>) =&gt;</span> {
+            <span class="hljs-keyword">var</span> validate = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">renavam</span>) </span>{
+                <span class="hljs-keyword">if</span> (!renavam || <span class="hljs-keyword">typeof</span> renavam !== <span class="hljs-string">'string'</span>) {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+                }
+
+                renavam = renavam.padStart(<span class="hljs-number">11</span>, <span class="hljs-string">'0'</span>);
+
+                <span class="hljs-keyword">if</span> (!renavam.match(<span class="hljs-string">'^[0-9]{11}$'</span>)) {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+                }
+
+                <span class="hljs-keyword">var</span> renavamSemDigito = renavam.substring(<span class="hljs-number">0</span>, <span class="hljs-number">10</span>);
+                <span class="hljs-keyword">var</span> renavamReversoSemDigito = renavamSemDigito.split(<span class="hljs-string">''</span>).reverse().join(<span class="hljs-string">''</span>);
+
+                <span class="hljs-keyword">var</span> soma = <span class="hljs-number">0</span>;
+                <span class="hljs-keyword">var</span> multiplicador = <span class="hljs-number">2</span>;
+                <span class="hljs-keyword">for</span> (<span class="hljs-keyword">var</span> i = <span class="hljs-number">0</span>; i &lt; <span class="hljs-number">10</span>; i++) {
+                    <span class="hljs-keyword">var</span> algarismo = renavamReversoSemDigito.substring(i, i + <span class="hljs-number">1</span>);
+                    soma += algarismo * multiplicador;
+
+                    <span class="hljs-keyword">if</span> (multiplicador &gt;= <span class="hljs-number">9</span>) {
+                        multiplicador = <span class="hljs-number">2</span>;
+                    } <span class="hljs-keyword">else</span> {
+                        multiplicador++;
+                    }
+                }
+
+                <span class="hljs-keyword">var</span> mod11 = soma % <span class="hljs-number">11</span>;
+                <span class="hljs-keyword">var</span> ultimoDigitoCalculado = <span class="hljs-number">11</span> - mod11;
+                ultimoDigitoCalculado = (ultimoDigitoCalculado &gt;= <span class="hljs-number">10</span> ? <span class="hljs-number">0</span> : ultimoDigitoCalculado);
+                <span class="hljs-keyword">var</span> digitoRealInformado = <span class="hljs-built_in">parseInt</span>(renavam.substring(renavam.length - <span class="hljs-number">1</span>, renavam.length));
+                <span class="hljs-keyword">if</span> (ultimoDigitoCalculado === digitoRealInformado) {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+                }
+
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+
+            };
+
+            <span class="hljs-keyword">return</span> validate(value.replace(<span class="hljs-regexp">/[^0-9]/g</span>, <span class="hljs-string">''</span>));
+        }
+    }
+});</pre></div>
+                    
+                    
+                    
+                    <p>Phone validation (DDD+Phone, does not work with DDI)</p>
+
+                    
+                    <div class='highlight'><pre>v8n.extend({
+    brphone(expected) {
+        <span class="hljs-keyword">return</span> <span class="hljs-function">(<span class="hljs-params">value</span>) =&gt;</span> {
+            <span class="hljs-keyword">var</span> validate = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">phone</span>) </span>{
+                <span class="hljs-keyword">if</span> (!phone || <span class="hljs-keyword">typeof</span> phone !== <span class="hljs-string">'string'</span>) {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+                }
+
+                <span class="hljs-keyword">if</span> (<span class="hljs-regexp">/^[0-9]{10,11}$/</span>.test(phone)) {
+                    <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
+                }
+
+                <span class="hljs-keyword">return</span> <span class="hljs-literal">false</span>;
+            };
+
+            <span class="hljs-keyword">return</span> validate(value.replace(<span class="hljs-regexp">/[^0-9]/g</span>, <span class="hljs-string">''</span>));
+        }
+    }
+});
+
+<span class="hljs-keyword">export</span> <span class="hljs-keyword">default</span> v8n;</pre></div>
+                    
+                    
+                    <div class="fleur">h</div>
+            </div>
+        </div>
+    </body>
+</html>
