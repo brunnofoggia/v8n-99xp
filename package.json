@@ -1,6 +1,6 @@
 {
   "name": "v8n-99xp",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "keywords": [
     "util",
     "functional",
@@ -16,8 +16,8 @@
   "description": "Valitation methods for v8n",
   "type": "module",
   "homepage": "https://v8n.99xp.org",
-  "browser": "lib/v8n-99xp.js",
-  "main": "lib/v8n-99xp.js",
+  "browser": "lib/v8n-99xp.min.js",
+  "main": "lib/v8n-99xp.esm.js",
   "module": "lib/v8n-99xp.esm.js",
   "jsnext:main": "lib/v8n-99xp.esm.js",
   "repository": {
