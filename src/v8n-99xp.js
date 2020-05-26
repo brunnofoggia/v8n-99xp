@@ -82,7 +82,7 @@ v8n.extend({
     passwordMatch(expected) {
         return (value, attrs) => {
             var validate = function (data) {
-                if (typeof (data) !== 'object') {
+                if (_typeof(data) !== 'object' || typeof data[0] === 'undefined') {
                     return true;
                 }
 

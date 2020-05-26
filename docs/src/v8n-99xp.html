@@ -134,7 +134,7 @@ it will be removed to get the first field, password in this case</p>
     passwordMatch(expected) {
         <span class="hljs-keyword">return</span> <span class="hljs-function">(<span class="hljs-params">value, attrs</span>) =&gt;</span> {
             <span class="hljs-keyword">var</span> validate = <span class="hljs-function"><span class="hljs-keyword">function</span> (<span class="hljs-params">data</span>) </span>{
-                <span class="hljs-keyword">if</span> (<span class="hljs-keyword">typeof</span> (data) !== <span class="hljs-string">'object'</span>) {
+                <span class="hljs-keyword">if</span> (_typeof(data) !== <span class="hljs-string">'object'</span> || <span class="hljs-keyword">typeof</span> data[<span class="hljs-number">0</span>] === <span class="hljs-string">'undefined'</span>) {
                     <span class="hljs-keyword">return</span> <span class="hljs-literal">true</span>;
                 }
 
