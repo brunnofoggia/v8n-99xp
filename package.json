@@ -1,6 +1,6 @@
 {
   "name": "v8n-99xp",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "keywords": [
     "util",
     "functional",
@@ -28,20 +28,21 @@
     "build": "rollup -c ",
     "doc": "docco src/v8n-99xp.js -l linear -t ../docco.jst -c ../docco.css",
     "lint": "eslint src/v8n-99xp.js",
-    "tests": "for file in $(find ./tests/*.js -type f -printf \"%f\n\") ; do echo tests/$file && jest tests/$file ; done",
+    "test": "jest",
     "minify": "terser ./v8n-99xp.js -o ./v8n-99xp.min.js -c -m --source-map \"filename='v8n-99xp.min.js.map'\"",
     "weight": "npm run minify | gzip-size | pretty-bytes"
   },
   "devDependencies": {
+    "@babel/core": "7.4.3",
+    "@babel/preset-env": "^7.4.3",
+    "@babel/register": "7.4.0",
+    "babel-jest": "^26.1.0",
+    "babel-plugin-istanbul": "^5.1.0",
     "docco": "*",
     "eslint": "1.10.x",
     "gzip-size-cli": "^1.0.0",
-    "jest": "^26.0.1",
+    "jest": "^26.1.0",
     "pretty-bytes-cli": "^1.0.0",
-    "@babel/core": "7.4.3",
-    "@babel/preset-env": "7.4.3",
-    "@babel/register": "7.4.0",
-    "babel-plugin-istanbul": "^5.1.0",
     "rollup": "1.10.0",
     "rollup-plugin-babel": "4.3.2",
     "rollup-plugin-browsersync": "1.0.0",
@@ -55,6 +56,7 @@
     "terser": "^4.6.11"
   },
   "dependencies": {
+    "underscore-99xp": "^1.6.0",
     "v8n": "^1.3.3"
   }
 }

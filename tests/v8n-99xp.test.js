@@ -1,5 +1,13 @@
 import v8n from '../lib/v8n-99xp.esm.js';
 
+// regex
+test('valid dd/mm/yyyy > 11/11/2020', () => {
+    expect(v8n().regex(/^(\d{2})\/(\d{2})\/(\d{4})$/).test('11/11/2020')).toBe(true);
+});
+test('invalid dd/mm/yyyy > 11/11', () => {
+    expect(v8n().email(/^(\d{2})\/(\d{2})\/(\d{4})$/).test('11/11/2020')).toBe(false);
+});
+
 // email
 test('valid email > team@99xp.org', () => {
     expect(v8n().email().test('team@99xp.org')).toBe(true);

@@ -6,6 +6,7 @@ import { version } from './package.json';
 
 const globals = {
   'v8n': 'v8n',
+  'underscore-99xp': '_',
 };
 
 const now = new Date();
@@ -28,7 +29,7 @@ const footer = '';
 export default [
   {
     input: 'src/v8n-99xp.js',
-    external: ['v8n'],
+    external: ['v8n', 'underscore-99xp'],
     output: [
       {
         file: 'lib/v8n-99xp.js',
@@ -53,7 +54,7 @@ export default [
   },
   {
     input: 'src/v8n-99xp.js',
-    external: ['v8n'],
+    external: ['v8n', 'underscore-99xp'],
     output: [
       {
         file: 'lib/v8n-99xp.min.js',

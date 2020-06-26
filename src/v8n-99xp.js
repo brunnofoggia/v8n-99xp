@@ -7,6 +7,36 @@
 // Baseline setup
 // --------------
 import v8n from 'v8n';
+import _ from 'underscore-99xp';
+
+// Custom Regex Validation
+v8n.extend({
+    regex(testRule, replaceRule) {
+        return _.partial(function (tr, rr, v) {
+            var validate = () => {
+                if (!v) {
+                    return false;
+                }
+                v = v.toString();
+
+                if (tr.test(v)) {
+                    return true;
+                }
+
+                return false;
+            };
+
+            if (_.isArray(rr)) {
+                var regex = rr[0],
+                    str = rr[1];
+
+                v = v.replace(regex, str);
+            }
+
+            return validate();
+        }, testRule, replaceRule);
+    }
+});
 
 // Email validation regex based
 v8n.extend({
@@ -61,7 +91,7 @@ v8n.extend({
 
                 var vf = v.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
                 if (/^[a-zA-Z]{2,}(\s+(([a-zA-Z]{3,})|([a-zA-Z]{2,}\s+[a-zA-Z]{3,})))+$/.test(vf) &&
-                        !/[bcdfghjklmnpqrstvwxyz]{3,}/.test(vf)) {
+                    !/[bcdfghjklmnpqrstvwxyz]{3,}/.test(vf)) {
                     return true;
                 }
 
@@ -116,27 +146,27 @@ v8n.extend({
             const not = (x) => !x
             const isEqual = (a) => (b) => b === a
             const mergeDigits = (num1, num2) => `${num1}${num2}`
-            const getTwoLastDigits = (cpf) => `${cpf[ 9 ]}${cpf[ 10 ]}`
+            const getTwoLastDigits = (cpf) => `${cpf[9]}${cpf[10]}`
             const getCpfToCheckInArray = (cpf) => cpf.substr(0, 9).split('')
-            const generateArray = (length) => Array.from({length}, (v, k) => k)
+            const generateArray = (length) => Array.from({ length }, (v, k) => k)
 
             const isIn = (list) => (val) =>
-                    list.findIndex(v => val === v) >= 0
+                list.findIndex(v => val === v) >= 0
 
             const isSameDigitsCPF = (cpfFull) =>
                 isIn(generateArray(10).map(generateStringSequence(11)))(cpfFull)
 
             const generateStringSequence = (times) => (char) =>
-                    (`${char}`.repeat(times))
+                (`${char}`.repeat(times))
 
             const toSumOfMultiplication = (total) => (result, num, i) =>
-                    result + (num * total--)
+                result + (num * total--)
 
             const getSumOfMultiplication = (list, total) =>
                 list.reduce(toSumOfMultiplication(total), 0)
 
             const getValidationDigit = (total) => (cpf) =>
-                    getDigit(mod11(getSumOfMultiplication(cpf, total)))
+                getDigit(mod11(getSumOfMultiplication(cpf, total)))
 
             const getDigit = (num) => (num > 1) ? 11 - num : 0
 
@@ -161,7 +191,7 @@ v8n.extend({
         return (value) => {
             const mod14 = (num) => num % 14
             const not = (x) => !x
-            const generateArray = (length) => Array.from({length}, (v, k) => k)
+            const generateArray = (length) => Array.from({ length }, (v, k) => k)
 
             const isIn = (list) => (val) => list.findIndex(v => val === v) >= 0;
 
@@ -169,7 +199,7 @@ v8n.extend({
                 isIn(generateArray(10).map(generateStringSequence(14)))(cnpjFull)
 
             const generateStringSequence = (times) => (char) =>
-                    (`${char}`.repeat(times))
+                (`${char}`.repeat(times))
 
             const isValidCNPJ = (cnpj) => {
                 if (!cnpj || mod14(cnpj.length) > 0) {
@@ -243,7 +273,7 @@ v8n.extend({
                     arr1 = selectEvenValues.map(e => e * 2);
                     arr2 = selectOddValues;
                 }
-                return {arr1, arr2}
+                return { arr1, arr2 }
             };
 
             const isValidCC = (cardNumber) => {
@@ -278,8 +308,8 @@ v8n.extend({
                 }
 
                 var [m, y] = dateStr.split('/'),
-                cY = (new Date()).getFullYear(),
-                        cM = (new Date()).getMonth() + 1;
+                    cY = (new Date()).getFullYear(),
+                    cM = (new Date()).getMonth() + 1;
 
                 if (parseInt(m, 10) < 1 || parseInt(m, 10) > 12) {
                     return false;
