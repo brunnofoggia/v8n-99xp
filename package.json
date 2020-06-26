@@ -39,7 +39,7 @@
     "babel-jest": "^26.1.0",
     "babel-plugin-istanbul": "^5.1.0",
     "docco": "*",
-    "eslint": "1.10.x",
+    "eslint": "4.18.x",
     "gzip-size-cli": "^1.0.0",
     "jest": "^26.1.0",
     "pretty-bytes-cli": "^1.0.0",
