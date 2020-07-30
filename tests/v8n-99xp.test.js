@@ -53,6 +53,9 @@ test('valid CPF', () => {
 test('invalid CPF', () => {
     expect(v8n().cpf().test('444.592.250-00')).toBe(false);
 });
+test('over chars CPF', () => {
+    expect(v8n().cpf().test('444.592.250-001')).toBe(false);
+});
 
 // CNPJ
 test('valid CNPJ', () => {
@@ -60,6 +63,29 @@ test('valid CNPJ', () => {
 });
 test('invalid CNPJ', () => {
     expect(v8n().cnpj().test('24.936.499/0001-00')).toBe(false);
+});
+test('over chars CNPJ', () => {
+    expect(v8n().cnpj().test('24.936.499/0001-001')).toBe(false);
+});
+
+// CPFCNPJ
+test('valid CPF on CPFCNPJ method', () => {
+    expect(v8n().cpfcnpj().test('244.592.250-00')).toBe(true);
+});
+test('invalid CPF on CPFCNPJ method', () => {
+    expect(v8n().cpfcnpj().test('444.592.250-00')).toBe(false);
+});
+test('less chars CPF on CPFCNPJ method', () => {
+    expect(v8n().cpfcnpj().test('444.592.250-0')).toBe(false);
+});
+test('valid CNPJ on CPFCNPJ method', () => {
+    expect(v8n().cpfcnpj().test('24.936.499/0001-01')).toBe(true);
+});
+test('invalid CNPJ on CPFCNPJ method', () => {
+    expect(v8n().cpfcnpj().test('24.936.499/0001-00')).toBe(false);
+});
+test('over chars CNPJ on CPFCNPJ method', () => {
+    expect(v8n().cpfcnpj().test('24.936.499/0001-001')).toBe(false);
 });
 
 // Credit Card
