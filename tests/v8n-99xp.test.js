@@ -12,6 +12,9 @@ test('invalid dd/mm/yyyy > 11/11', () => {
 test('valid email > team@99xp.org', () => {
     expect(v8n().email().test('team@99xp.org')).toBe(true);
 });
+test('valid email 2 > team@99xp.newdomain', () => {
+    expect(v8n().email().test('team@99xp.newdomain')).toBe(true);
+});
 test('invalid email > team@99xp', () => {
     expect(v8n().email().test('team@99xp')).toBe(false);
 });
