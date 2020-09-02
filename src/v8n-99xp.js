@@ -102,8 +102,7 @@ v8n.extend({
                 if (
                     /^[a-zA-Z]{2,}(\s+(([a-zA-Z]{3,})|([a-zA-Z]{2,}\s+[a-zA-Z]{3,})))+$/.test(
                         vf
-                    ) &&
-                    !/[bcdfghjklmnpqrstvwxz]{3,}/.test(vf)
+                    )
                 ) {
                     return true;
                 }

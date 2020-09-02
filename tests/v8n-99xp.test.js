@@ -42,6 +42,9 @@ test('valid fullname > bruno foggia', () => {
 test('valid fullname 2 > kaitlyn maria', () => {
     expect(v8n().fullname().test('kaitlyn maria')).toBe(true);
 });
+test('valid fullname 3 > karen schmidt', () => {
+    expect(v8n().fullname().test('karen schmidt')).toBe(true);
+});
 test('invalid fullname > bruno', () => {
     expect(v8n().fullname().test('bruno')).toBe(false);
 });
