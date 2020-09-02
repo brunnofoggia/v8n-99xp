@@ -1,8 +1,7 @@
 // [v8n-99xp](https://github.com/brunnofoggia/v8n-99xp) is a set of validation
 // methods based on projects I've been working on using
-// [v8n](https://imbrn.github.io/v8n/). Validations included: email, alpha string, 
+// [v8n](https://imbrn.github.io/v8n/). Validations included: email, alpha string,
 // fullname, passwords match, cpf, cnpj, credit card number and validto, renavam, brphone
-
 
 // Baseline setup
 // --------------
@@ -12,30 +11,34 @@ import _ from 'underscore-99xp';
 // Custom Regex Validation
 v8n.extend({
     regex(testRule, replaceRule) {
-        return _.partial(function (tr, rr, v) {
-            var validate = () => {
-                if (!v) {
+        return _.partial(
+            function (tr, rr, v) {
+                var validate = () => {
+                    if (!v) {
+                        return false;
+                    }
+                    v = v.toString();
+
+                    if (tr.test(v)) {
+                        return true;
+                    }
+
                     return false;
+                };
+
+                if (_.isArray(rr)) {
+                    var regex = rr[0],
+                        str = rr[1];
+
+                    v = v.replace(regex, str);
                 }
-                v = v.toString();
 
-                if (tr.test(v)) {
-                    return true;
-                }
-
-                return false;
-            };
-
-            if (_.isArray(rr)) {
-                var regex = rr[0],
-                    str = rr[1];
-
-                v = v.replace(regex, str);
-            }
-
-            return validate();
-        }, testRule, replaceRule);
-    }
+                return validate();
+            },
+            testRule,
+            replaceRule
+        );
+    },
 });
 
 // Email validation regex based
@@ -47,7 +50,9 @@ v8n.extend({
                     return false;
                 }
 
-                if (/^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/.test(email)) {
+                if (
+                    /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/.test(email)
+                ) {
                     return true;
                 }
 
@@ -55,8 +60,8 @@ v8n.extend({
             };
 
             return validate(value);
-        }
-    }
+        };
+    },
 });
 
 // Alpha Numeric validation
@@ -68,7 +73,11 @@ v8n.extend({
                     return false;
                 }
 
-                if (/[a-zA-Z]+/.test(s) && /[0-9]+/.test(s) && !/[^a-zA-Z0-9]+/.test(s)) {
+                if (
+                    /[a-zA-Z]+/.test(s) &&
+                    /[0-9]+/.test(s) &&
+                    !/[^a-zA-Z0-9]+/.test(s)
+                ) {
                     return true;
                 }
 
@@ -76,8 +85,8 @@ v8n.extend({
             };
 
             return validate(value);
-        }
-    }
+        };
+    },
 });
 
 // Fullname validation (reject single names)
@@ -90,8 +99,12 @@ v8n.extend({
                 }
 
                 var vf = v.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
-                if (/^[a-zA-Z]{2,}(\s+(([a-zA-Z]{3,})|([a-zA-Z]{2,}\s+[a-zA-Z]{3,})))+$/.test(vf) &&
-                    !/[bcdfghjklmnpqrstvwxyz]{3,}/.test(vf)) {
+                if (
+                    /^[a-zA-Z]{2,}(\s+(([a-zA-Z]{3,})|([a-zA-Z]{2,}\s+[a-zA-Z]{3,})))+$/.test(
+                        vf
+                    ) &&
+                    !/[bcdfghjklmnpqrstvwxz]{3,}/.test(vf)
+                ) {
                     return true;
                 }
 
@@ -99,8 +112,8 @@ v8n.extend({
             };
 
             return validate(value);
-        }
-    }
+        };
+    },
 });
 
 // Password match compares two password values
@@ -112,7 +125,10 @@ v8n.extend({
     passwordMatch(expected) {
         return (value, attrs) => {
             var validate = function (data) {
-                if (typeof data !== 'object' || typeof data[0] === 'undefined') {
+                if (
+                    typeof data !== 'object' ||
+                    typeof data[0] === 'undefined'
+                ) {
                     return true;
                 }
 
@@ -134,74 +150,73 @@ v8n.extend({
             };
 
             return validate(value, attrs);
-        }
-    }
+        };
+    },
 });
 
 // CPF Validation (works with or without mask)
-var validateCPF = function(value) {
-    const mod11 = (num) => num % 11
-    const not = (x) => !x
-    const isEqual = (a) => (b) => b === a
-    const mergeDigits = (num1, num2) => `${num1}${num2}`
-    const getTwoLastDigits = (cpf) => `${cpf[9]}${cpf[10]}`
-    const getCpfToCheckInArray = (cpf) => cpf.substr(0, 9).split('')
-    const generateArray = (length) => Array.from({ length }, (v, k) => k)
+var validateCPF = function (value) {
+    const mod11 = (num) => num % 11;
+    const not = (x) => !x;
+    const isEqual = (a) => (b) => b === a;
+    const mergeDigits = (num1, num2) => `${num1}${num2}`;
+    const getTwoLastDigits = (cpf) => `${cpf[9]}${cpf[10]}`;
+    const getCpfToCheckInArray = (cpf) => cpf.substr(0, 9).split('');
+    const generateArray = (length) => Array.from({ length }, (v, k) => k);
 
-    const isIn = (list) => (val) =>
-        list.findIndex(v => val === v) >= 0
+    const isIn = (list) => (val) => list.findIndex((v) => val === v) >= 0;
 
     const isSameDigitsCPF = (cpfFull) =>
-        isIn(generateArray(10).map(generateStringSequence(11)))(cpfFull)
+        isIn(generateArray(10).map(generateStringSequence(11)))(cpfFull);
 
-    const generateStringSequence = (times) => (char) =>
-        (`${char}`.repeat(times))
+    const generateStringSequence = (times) => (char) => `${char}`.repeat(times);
 
     const toSumOfMultiplication = (total) => (result, num, i) =>
-        result + (num * total--)
+        result + num * total--;
 
     const getSumOfMultiplication = (list, total) =>
-        list.reduce(toSumOfMultiplication(total), 0)
+        list.reduce(toSumOfMultiplication(total), 0);
 
     const getValidationDigit = (total) => (cpf) =>
-        getDigit(mod11(getSumOfMultiplication(cpf, total)))
+        getDigit(mod11(getSumOfMultiplication(cpf, total)));
 
-    const getDigit = (num) => (num > 1) ? 11 - num : 0
+    const getDigit = (num) => (num > 1 ? 11 - num : 0);
 
     const isValidCPF = (cpfFull) => {
-        const cpf = getCpfToCheckInArray(cpfFull)
-        const firstDigit = getValidationDigit(10)(cpf)
-        const secondDigit = getValidationDigit(11)(cpf.concat(firstDigit))
+        const cpf = getCpfToCheckInArray(cpfFull);
+        const firstDigit = getValidationDigit(10)(cpf);
+        const secondDigit = getValidationDigit(11)(cpf.concat(firstDigit));
 
-        return isEqual(getTwoLastDigits(cpfFull))(mergeDigits(firstDigit, secondDigit));
-    }
+        return isEqual(getTwoLastDigits(cpfFull))(
+            mergeDigits(firstDigit, secondDigit)
+        );
+    };
 
-    const validate = (CPF) => CPF.length === 11 && not(isSameDigitsCPF(CPF)) && isValidCPF(CPF)
+    const validate = (CPF) =>
+        CPF.length === 11 && not(isSameDigitsCPF(CPF)) && isValidCPF(CPF);
 
     return validate(value.replace(/(\.|\-)/g, ''));
-
-}
+};
 
 v8n.extend({
     cpf(expected) {
         return (value) => {
             return validateCPF(value.replace(/(\.|\-)/g, ''));
-        }
-    }
+        };
+    },
 });
 
 var validateCNPJ = function (value) {
-    const mod14 = (num) => num % 14
-    const not = (x) => !x
-    const generateArray = (length) => Array.from({ length }, (v, k) => k)
+    const mod14 = (num) => num % 14;
+    const not = (x) => !x;
+    const generateArray = (length) => Array.from({ length }, (v, k) => k);
 
-    const isIn = (list) => (val) => list.findIndex(v => val === v) >= 0;
+    const isIn = (list) => (val) => list.findIndex((v) => val === v) >= 0;
 
     const isSameDigitsCNPJ = (cnpjFull) =>
-        isIn(generateArray(10).map(generateStringSequence(14)))(cnpjFull)
+        isIn(generateArray(10).map(generateStringSequence(14)))(cnpjFull);
 
-    const generateStringSequence = (times) => (char) =>
-        (`${char}`.repeat(times))
+    const generateStringSequence = (times) => (char) => `${char}`.repeat(times);
 
     const isValidCNPJ = (cnpj) => {
         if (!cnpj || mod14(cnpj.length) > 0) {
@@ -221,7 +236,7 @@ var validateCNPJ = function (value) {
                 pos = 9;
             }
         }
-        resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+        resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
         if (resultado + '' !== digitos.charAt(0) + '') {
             return false;
         }
@@ -235,15 +250,16 @@ var validateCNPJ = function (value) {
                 pos = 9;
             }
         }
-        resultado = soma % 11 < 2 ? 0 : 11 - soma % 11;
+        resultado = soma % 11 < 2 ? 0 : 11 - (soma % 11);
         if (resultado + '' !== digitos.charAt(1) + '') {
             return false;
         }
 
         return true;
-    }
+    };
 
-    const validate = (CNPJ) => CNPJ.length === 14 && not(isSameDigitsCNPJ(CNPJ)) && isValidCNPJ(CNPJ);
+    const validate = (CNPJ) =>
+        CNPJ.length === 14 && not(isSameDigitsCNPJ(CNPJ)) && isValidCNPJ(CNPJ);
 
     return validate(value.replace(/(\.|\-|\/)/g, ''));
 };
@@ -253,8 +269,8 @@ v8n.extend({
     cnpj(expected) {
         return (value) => {
             return validateCNPJ(value.replace(/(\.|\-|\/)/g, ''));
-        }
-    }
+        };
+    },
 });
 
 // CPF / CNPJ Validation (works with or without mask)
@@ -263,91 +279,99 @@ v8n.extend({
         return (value) => {
             var v = value.replace(/(\.|\-|\/)/g, '');
             return v.length === 11 ? validateCPF(v) : validateCNPJ(v);
-        }
-    }
+        };
+    },
 });
 
 // Credit card number validation - [Reference](https://medium.com/swlh/credit-card-validation-in-javascript-ruby-and-c-4b0a9b245766)
 v8n.extend({
     creditcard(expected) {
         return (value) => {
-
             const sumArrDigits = (array) => {
-                return array.join('').split('').map(e => parseInt(e))
+                return array
+                    .join('')
+                    .split('')
+                    .map((e) => parseInt(e));
             };
 
             const validlen = (arr) => {
-                return arr.length === 13 || arr.length === 15 || arr.length === 16
+                return (
+                    arr.length === 13 || arr.length === 15 || arr.length === 16
+                );
             };
 
             const arrSplit = (cardArray) => {
                 const selectOddValues = cardArray.filter((a, i) => i % 2 === 1);
-                const selectEvenValues = cardArray.filter((a, i) => i % 2 === 0);
+                const selectEvenValues = cardArray.filter(
+                    (a, i) => i % 2 === 0
+                );
                 let arr1;
                 let arr2;
                 if (cardArray.length % 2 === 1) {
-                    arr1 = selectOddValues.map(e => e * 2);
+                    arr1 = selectOddValues.map((e) => e * 2);
                     arr2 = selectEvenValues;
                 } else {
-                    arr1 = selectEvenValues.map(e => e * 2);
+                    arr1 = selectEvenValues.map((e) => e * 2);
                     arr2 = selectOddValues;
                 }
-                return { arr1, arr2 }
+                return { arr1, arr2 };
             };
 
             const isValidCC = (cardNumber) => {
-                const cardArray = cardNumber.toString().split('').map((e) => parseInt(e))
+                const cardArray = cardNumber
+                    .toString()
+                    .split('')
+                    .map((e) => parseInt(e));
                 validlen(cardArray);
-                const splitArr = arrSplit(cardArray)
-                const checksum = sumArrDigits(splitArr.arr1).reduce((a, c) => a + c) + splitArr.arr2.reduce((a, c) => a + c);
+                const splitArr = arrSplit(cardArray);
+                const checksum =
+                    sumArrDigits(splitArr.arr1).reduce((a, c) => a + c) +
+                    splitArr.arr2.reduce((a, c) => a + c);
 
                 if (checksum % 10 === 0) {
                     return true;
                 }
 
                 return false;
-            }
-
+            };
 
             const validate = (cardNumber) => isValidCC(cardNumber);
 
             return validate(value.replace(/[^0-9]/g, ''));
-        }
-    }
+        };
+    },
 });
 
 // Credit card validto validation (requires mm/yyyy mask)
 v8n.extend({
     creditcardValidTo(expected) {
         return (value) => {
-
             const isValidDate = (dateStr) => {
                 if (!/^\d{2}\/\d{4}$/.test(dateStr)) {
                     return false;
                 }
 
                 var [m, y] = dateStr.split('/'),
-                    cY = (new Date()).getFullYear(),
-                    cM = (new Date()).getMonth() + 1;
+                    cY = new Date().getFullYear(),
+                    cM = new Date().getMonth() + 1;
 
                 if (parseInt(m, 10) < 1 || parseInt(m, 10) > 12) {
                     return false;
                 }
-                if (parseInt(y, 10) < cY || parseInt(y, 10) > (cY + 10)) {
+                if (parseInt(y, 10) < cY || parseInt(y, 10) > cY + 10) {
                     return false;
                 } else if (parseInt(y, 10) === cY && parseInt(m, 10) < cM) {
                     return false;
                 }
 
                 return true;
-            }
-
+            };
 
             const validate = (dateStr) => isValidDate(dateStr);
 
             return validate(value);
-        }
-    }
+        };
+    },
 });
 
 // Renavam validation - [Reference](https://github.com/eliseuborges/Renavam/blob/master/Renavam.js)
@@ -366,7 +390,10 @@ v8n.extend({
                 }
 
                 var renavamSemDigito = renavam.substring(0, 10);
-                var renavamReversoSemDigito = renavamSemDigito.split('').reverse().join('');
+                var renavamReversoSemDigito = renavamSemDigito
+                    .split('')
+                    .reverse()
+                    .join('');
 
                 var soma = 0;
                 var multiplicador = 2;
@@ -383,19 +410,21 @@ v8n.extend({
 
                 var mod11 = soma % 11;
                 var ultimoDigitoCalculado = 11 - mod11;
-                ultimoDigitoCalculado = (ultimoDigitoCalculado >= 10 ? 0 : ultimoDigitoCalculado);
-                var digitoRealInformado = parseInt(renavam.substring(renavam.length - 1, renavam.length));
+                ultimoDigitoCalculado =
+                    ultimoDigitoCalculado >= 10 ? 0 : ultimoDigitoCalculado;
+                var digitoRealInformado = parseInt(
+                    renavam.substring(renavam.length - 1, renavam.length)
+                );
                 if (ultimoDigitoCalculado === digitoRealInformado) {
                     return true;
                 }
 
                 return false;
-
             };
 
             return validate(value.replace(/[^0-9]/g, ''));
-        }
-    }
+        };
+    },
 });
 
 // Phone validation (DDD+Phone, does not work with DDI)
@@ -415,8 +444,8 @@ v8n.extend({
             };
 
             return validate(value.replace(/[^0-9]/g, ''));
-        }
-    }
+        };
+    },
 });
 
 export default v8n;

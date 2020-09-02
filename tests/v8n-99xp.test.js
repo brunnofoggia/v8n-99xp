@@ -2,10 +2,18 @@ import v8n from '../lib/v8n-99xp.esm.js';
 
 // regex
 test('valid dd/mm/yyyy > 11/11/2020', () => {
-    expect(v8n().regex(/^(\d{2})\/(\d{2})\/(\d{4})$/).test('11/11/2020')).toBe(true);
+    expect(
+        v8n()
+            .regex(/^(\d{2})\/(\d{2})\/(\d{4})$/)
+            .test('11/11/2020')
+    ).toBe(true);
 });
 test('invalid dd/mm/yyyy > 11/11', () => {
-    expect(v8n().email(/^(\d{2})\/(\d{2})\/(\d{4})$/).test('11/11/2020')).toBe(false);
+    expect(
+        v8n()
+            .email(/^(\d{2})\/(\d{2})\/(\d{4})$/)
+            .test('11/11/2020')
+    ).toBe(false);
 });
 
 // email
@@ -31,22 +39,41 @@ test('string > loremipsum123', () => {
 test('valid fullname > bruno foggia', () => {
     expect(v8n().fullname().test('bruno foggia')).toBe(true);
 });
+test('valid fullname 2 > kaitlyn maria', () => {
+    expect(v8n().fullname().test('kaitlyn maria')).toBe(true);
+});
 test('invalid fullname > bruno', () => {
     expect(v8n().fullname().test('bruno')).toBe(false);
 });
 
 // password match
 test('passwords match', () => {
-    expect(v8n().passwordMatch().test(['string123', 'password_1', {
-        password: 'string123',
-        password_1: 'string123'
-    }])).toBe(false);
+    expect(
+        v8n()
+            .passwordMatch()
+            .test([
+                'string123',
+                'password_1',
+                {
+                    password: 'string123',
+                    password_1: 'string123',
+                },
+            ])
+    ).toBe(false);
 });
 test('passwords not match', () => {
-    expect(v8n().passwordMatch().test(['string123', 'password_1', {
-        password: 'string1234',
-        password_1: 'string123'
-    }])).toBe(false);
+    expect(
+        v8n()
+            .passwordMatch()
+            .test([
+                'string123',
+                'password_1',
+                {
+                    password: 'string1234',
+                    password_1: 'string123',
+                },
+            ])
+    ).toBe(false);
 });
 
 // CPF
