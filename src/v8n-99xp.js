@@ -347,18 +347,23 @@ v8n.extend({
         return _.partial(function(dSL, dEL, v) {
             var validate = () => {
                 var dateType = /\//.test(v) ? 'pt' : 'en',
-                    splitter = dateType==='pt' ? '/' : '-',
-                    regexp = dateType==='pt' ? /^((?<d>\d{2})\/)?(?<m>\d{2})\/(?<y>\d{4})$/ : /^(?<y>\d{4})-(?<m>\d{2})(-(?<d>\d{2}))?$/,
+                    regexp = dateType === 'pt' ? /^((?<d>\d{2})\/)?(?<m>\d{2})\/(?<y>\d{4})$/ : /^(?<y>\d{4})-(?<m>\d{2})(-(?<d>\d{2}))?$/,
                     matches = v.match(regexp);
-                if (!v || !matches) {
-                  return false;
+
+                if (!matches) {
+                    return false;
                 }
 
                 var d = matches.groups['d'] || '31',
                     m = matches.groups['m'],
                     y = matches.groups['y'],
                     cD = new Date(),
-                    iD = new Date([y, parseInt(m, 10)-1, d].join('-'));
+                    iD = new Date(y, parseInt(m, 10) - 1, d, 12);
+
+                cD.setHours(0);
+                cD.setMinutes(0);
+                cD.setSeconds(0);
+                cD.setMilliseconds(0);
 
                 if (parseInt(d, 10) < 1 || parseInt(d, 10) > 31) {
                     return false;
@@ -368,20 +373,19 @@ v8n.extend({
                     return false;
                 }
 
-                if(dSL || dEL) {
-                    if (dSL === true) { // starting from current date
-                        if(iD < cD) {
-                            return false;
-                        }
-                    } else {
-                        dSL = new Date(dSL[0], (dSL[1] || 0)-1, dSL[2] || 1);
+                if (dSL || dEL) {
+                    if (dSL) {
+                    dSL = dSL===true ? cD :
+                        new Date(dSL[0], (dSL[1] || 0) - 1, dSL[2] || 1, dSL[3] || 0, dSL[4] || 0, dSL[5] || 0);
+
                         if (iD < dSL) {
                             return false;
                         }
                     }
 
                     if (dEL) {
-                        dEL = new Date(dEL[0], (dEL[1] || 12)-1, dEL[2] || 31);
+                        dEL = new Date(dEL[0], (dEL[1] || 12) - 1, dEL[2] || 31, dSL[3] || 23, dSL[4] || 59, dSL[5] || 59);
+
                         if (iD > dEL) {
                             return false;
                         }
