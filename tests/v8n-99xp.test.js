@@ -130,17 +130,18 @@ test('invalid Credit Card', () => {
 });
 
 // Credit Card ValidTo
-test('valid Credit Card validTo > 09/2030', () => {
-    expect(v8n().creditcardValidTo().test('09/2030')).toBe(true);
+test('valid Credit Card validTo > 01/09/2030', () => {
+
+    expect(v8n().validTo(true, [new Date().getFullYear()+10]).test('01/09/2030')).toBe(true);
 });
 test('invalid Credit Card validTo > 09/2099', () => {
-    expect(v8n().creditcardValidTo().test('09/2099')).toBe(false);
+    expect(v8n().validTo(true, [new Date().getFullYear()+10]).test('09/2099')).toBe(false);
 });
 test('invalid Credit Card validTo > 09/2019', () => {
-    expect(v8n().creditcardValidTo().test('09/2019')).toBe(false);
+    expect(v8n().validTo(true).test('09/2019')).toBe(false);
 });
 test('invalid Credit Card validTo > 09/24', () => {
-    expect(v8n().creditcardValidTo().test('09/24')).toBe(false);
+    expect(v8n().validTo(true).test('09/24')).toBe(false);
 });
 
 // Renavam
