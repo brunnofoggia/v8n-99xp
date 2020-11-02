@@ -89,9 +89,34 @@ v8n.extend({
     },
 });
 
-// Fullname validation (reject single names)
 v8n.extend({
     fullname(expected) {
+        return (value) => {
+            var validate = function (v) {
+                if (!v || typeof v !== 'string') {
+                    return false;
+                }
+
+                var vf = v.normalize('NFD').replace(/[\u0300-\u036f]/g, '');
+                if (
+                    /^[a-zA-Z]{2,}(\s+(([a-zA-Z]{2,})))+$/.test(
+                        vf
+                    )
+                ) {
+                    return true;
+                }
+
+                return false;
+            };
+
+            return validate(value);
+        };
+    },
+});
+
+// Fullname validation (reject single names)
+v8n.extend({
+    fullnameStrict(expected) {
         return (value) => {
             var validate = function (v) {
                 if (!v || typeof v !== 'string') {
